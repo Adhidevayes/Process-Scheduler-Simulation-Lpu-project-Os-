@@ -247,3 +247,67 @@ def compare_algorithms():
     a3 = sum(p.waiting for p in r3)/len(r3)
 
     compare_chart(g1,g2,g3,a1,a2,a3)
+
+
+# UI SETUP
+app = ctk.CTk()
+app.geometry("1200x700")
+app.title("CPU Scheduler Simulator")
+
+top = ctk.CTkFrame(app)
+top.pack(fill="x", padx=10, pady=10)
+
+entries = []
+for i in range(3):
+    a = ctk.CTkEntry(top, width=60, placeholder_text="AT")
+    a.grid(row=i,column=0,padx=5,pady=5)
+    b = ctk.CTkEntry(top, width=60, placeholder_text="BT")
+    b.grid(row=i,column=1)
+    entries.append((a,b))
+
+algo_box = ctk.CTkComboBox(top, values=["FCFS","SJF","Round Robin"])
+algo_box.set("FCFS")
+algo_box.grid(row=0,column=2,padx=10)
+
+quantum = ctk.CTkEntry(top, width=60, placeholder_text="Q")
+quantum.grid(row=1,column=2)
+
+ctk.CTkButton(top,text="Run",command=run_algo).grid(row=2,column=2)
+ctk.CTkButton(top,text="Compare",command=compare_algorithms).grid(row=2,column=3)
+
+main = ctk.CTkFrame(app)
+main.pack(fill="both",expand=True)
+
+# LEFT TABLES
+table_frame = ctk.CTkFrame(main)
+table_frame.pack(side="left", fill="both", expand=True, padx=10)
+
+style = ttk.Style()
+style.configure("Treeview", font=("Segoe UI",18,"bold"), rowheight=35)
+style.configure("Treeview.Heading", font=("Segoe UI",20,"bold"))
+
+def create_table(parent,title):
+    frame = ctk.CTkFrame(parent)
+
+    ctk.CTkLabel(frame,text=title,font=("Segoe UI",15,"bold")).pack()
+
+    tree = ttk.Treeview(frame, columns=("PID","AT","BT","WT","TAT"), show="headings", height=3)
+    for col in ("PID","AT","BT","WT","TAT"):
+        tree.heading(col,text=col)
+        tree.column(col,anchor="center",width=90)
+
+    tree.pack(fill="x")
+    return frame,tree
+
+frame_fcfs,tree_fcfs = create_table(table_frame,"FCFS")
+frame_sjf,tree_sjf = create_table(table_frame,"SJF")
+frame_rr,tree_rr = create_table(table_frame,"Round Robin")
+
+# initially show only FCFS
+frame_fcfs.pack(fill="x", pady=10)
+
+# RIGHT GRAPH
+chart_frame = ctk.CTkFrame(main)
+chart_frame.pack(side="right", fill="both", expand=True)
+
+app.mainloop()
