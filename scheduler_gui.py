@@ -187,3 +187,63 @@ def compare_chart(g1, g2, g3, a1, a2, a3):
     canvas = FigureCanvasTkAgg(fig, master=chart_frame)
     canvas.draw()
     canvas.get_tk_widget().pack(fill="both", expand=True)
+
+
+
+# ACTIONS
+def run_algo():
+    processes = get_data()
+    if not processes:
+        return
+
+    algo = algo_box.get()
+
+    if algo == "FCFS":
+        gantt, res = fcfs(processes)
+        update_table(tree_fcfs, res)
+        show_only(frame_fcfs)
+
+    elif algo == "SJF":
+        gantt, res = sjf(processes)
+        update_table(tree_sjf, res)
+        show_only(frame_sjf)
+
+    else:
+        try:
+            q = int(quantum.get())
+        except:
+            messagebox.showerror("Error","Invalid quantum")
+            return
+
+        gantt, res = round_robin(processes, q)
+        update_table(tree_rr, res)
+        show_only(frame_rr)
+
+    draw_chart(gantt)
+
+
+def compare_algorithms():
+    processes = get_data()
+    if not processes:
+        return
+
+    try:
+        q = int(quantum.get())
+    except:
+        q = 2
+
+    g1,r1 = fcfs(copy.deepcopy(processes))
+    g2,r2 = sjf(copy.deepcopy(processes))
+    g3,r3 = round_robin(copy.deepcopy(processes), q)
+
+    update_table(tree_fcfs, r1)
+    update_table(tree_sjf, r2)
+    update_table(tree_rr, r3)
+
+    show_all()
+
+    a1 = sum(p.waiting for p in r1)/len(r1)
+    a2 = sum(p.waiting for p in r2)/len(r2)
+    a3 = sum(p.waiting for p in r3)/len(r3)
+
+    compare_chart(g1,g2,g3,a1,a2,a3)
