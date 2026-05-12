@@ -37,3 +37,56 @@ def fcfs(processes):
 
     return gantt, processes
 
+
+def round_robin(processes, q):
+    time = 0
+    queue, completed, gantt = [], [], []
+    processes.sort(key=lambda x: x.arrival)
+
+    while processes or queue:
+        while processes and processes[0].arrival <= time:
+            queue.append(processes.pop(0))
+
+        if queue:
+            p = queue.pop(0)
+            run = min(q, p.remaining)
+            gantt.append((p.pid, time, time + run))
+            time += run
+            p.remaining -= run
+
+            while processes and processes[0].arrival <= time:
+                queue.append(processes.pop(0))
+
+            if p.remaining > 0:
+                queue.append(p)
+            else:
+                p.turnaround = time - p.arrival
+                p.waiting = p.turnaround - p.burst
+                completed.append(p)
+        else:
+            time += 1
+
+    return gantt, completed
+
+
+def sjf(processes):
+    time = 0
+    ready, completed, gantt = [], [], []
+    processes.sort(key=lambda x: x.arrival)
+
+    while processes or ready:
+        while processes and processes[0].arrival <= time:
+            ready.append(processes.pop(0))
+
+        if ready:
+            ready.sort(key=lambda x: x.burst)
+            p = ready.pop(0)
+            gantt.append((p.pid, time, time + p.burst))
+            time += p.burst
+            p.turnaround = time - p.arrival
+            p.waiting = p.turnaround - p.burst
+            completed.append(p)
+        else:
+            time += 1
+
+    return gantt, completed
