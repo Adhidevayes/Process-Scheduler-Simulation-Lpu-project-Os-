@@ -90,3 +90,100 @@ def sjf(processes):
             time += 1
 
     return gantt, completed
+
+
+# UI FUNCTIONS
+def get_data():
+    data = []
+    try:
+        for i, (a, b) in enumerate(entries):
+            data.append(Process(i+1, int(a.get()), int(b.get())))
+        return data
+    except:
+        messagebox.showerror("Error", "Enter valid numbers")
+        return None
+
+
+def update_table(tree, processes):
+    for row in tree.get_children():
+        tree.delete(row)
+    for p in processes:
+        tree.insert("", "end", values=(p.pid, p.arrival, p.burst, p.waiting, p.turnaround))
+
+
+
+# SHOW / HIDE TABLES
+def show_only(frame):
+    frame_fcfs.pack_forget()
+    frame_sjf.pack_forget()
+    frame_rr.pack_forget()
+    frame.pack(fill="x", pady=10)
+
+
+def show_all():
+    frame_fcfs.pack(fill="x", pady=20)
+    frame_sjf.pack(fill="x", pady=20)
+    frame_rr.pack(fill="x", pady=20)
+
+
+
+# GRAPH
+def draw_chart(gantt):
+    for w in chart_frame.winfo_children():
+        w.destroy()
+
+    fig, ax = plt.subplots(figsize=(6,3))
+
+    for pid, start, end in gantt:
+        ax.barh(0, end-start, left=start)
+        ax.text((start+end)/2, 0, f"P{pid}",
+                ha='center', va='center',
+                color="white", fontweight="bold")
+
+    ax.set_facecolor("#222")
+    fig.patch.set_facecolor("#222")
+    ax.set_title("Gantt Chart", color="white")
+    ax.set_yticks([])
+    ax.tick_params(colors='white')
+
+    canvas = FigureCanvasTkAgg(fig, master=chart_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill="both", expand=True)
+
+
+def compare_chart(g1, g2, g3, a1, a2, a3):
+    for w in chart_frame.winfo_children():
+        w.destroy()
+
+    fig, (ax1, ax2) = plt.subplots(2,1, figsize=(8,6))
+
+    y = [2,1,0]
+    labels = ["FCFS","SJF","RR"]
+
+    for y_pos, gantt in zip(y, [g1,g2,g3]):
+        for pid, start, end in gantt:
+            ax1.barh(y_pos, end-start, left=start)
+            ax1.text((start+end)/2, y_pos, f"P{pid}",
+                     ha='center', va='center', color="white", fontweight="bold")
+
+    ax1.set_yticks(y)
+    ax1.set_yticklabels(labels, color="white")
+    ax1.set_title("Gantt Comparison", color="white")
+
+    vals = [a1,a2,a3]
+    ax2.bar(["FCFS","SJF","RR"], vals)
+
+    for i,v in enumerate(vals):
+        ax2.text(i, v+0.2, f"{v:.2f}", ha='center', color="white")
+
+    ax2.set_title("Average Waiting Time", color="white")
+
+    for ax in (ax1,ax2):
+        ax.set_facecolor("#222")
+        ax.tick_params(colors='white')
+
+    fig.patch.set_facecolor("#222")
+
+    canvas = FigureCanvasTkAgg(fig, master=chart_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack(fill="both", expand=True)
