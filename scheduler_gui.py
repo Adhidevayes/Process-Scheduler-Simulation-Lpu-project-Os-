@@ -261,7 +261,7 @@ entries = []
 for i in range(3):
     a = ctk.CTkEntry(top, width=60, placeholder_text="AT")
     a.grid(row=i,column=0,padx=5,pady=5)
-    b = ctk.CTkEntry(top, width=60, placeholder_text="BT")
+    b = ctk.CTkEntry(top, width=59, placeholder_text="BT")
     b.grid(row=i,column=1)
     entries.append((a,b))
 
@@ -283,8 +283,8 @@ table_frame = ctk.CTkFrame(main)
 table_frame.pack(side="left", fill="both", expand=True, padx=10)
 
 style = ttk.Style()
-style.configure("Treeview", font=("Segoe UI",18,"bold"), rowheight=35)
-style.configure("Treeview.Heading", font=("Segoe UI",20,"bold"))
+style.configure("Treeview", font=("Segoe UI",19,"bold"), rowheight=35)
+style.configure("Treeview.Heading", font=("Segoe UI",21,"bold"))
 
 def create_table(parent,title):
     frame = ctk.CTkFrame(parent)
