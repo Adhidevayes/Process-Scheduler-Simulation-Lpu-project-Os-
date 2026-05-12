@@ -121,9 +121,9 @@ def show_only(frame):
 
 
 def show_all():
-    frame_fcfs.pack(fill="x", pady=20)
-    frame_sjf.pack(fill="x", pady=20)
-    frame_rr.pack(fill="x", pady=20)
+    frame_fcfs.pack(fill="x", pady=10)
+    frame_sjf.pack(fill="x", pady=10)
+    frame_rr.pack(fill="x", pady=10)
 
 
 
